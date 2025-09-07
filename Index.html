@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Раскрой листа</title>
+    <style>
+      body { font-family: sans-serif; padding: 20px; }
+      canvas { border: 1px solid black; }
+      input, textarea { margin: 5px 0; }
+    </style>
+  </head>
+  <body>
+    <h1>Раскрой листа</h1>
+
+    <label>Ширина листа: <input type="number" id="sheetWidth" value="600"></label><br>
+    <label>Высота листа: <input type="number" id="sheetHeight" value="400"></label><br>
+
+    <h3>Детали (ширина x высота):</h3>
+    <textarea id="parts" rows="5" cols="30">200x100
+100x100
+300x200</textarea><br>
+
+    <button onclick="draw()">Построить</button><br><br>
+
+    <canvas id="canvas" width="600" height="400"></canvas>
+
+    <script>
+      function draw() {
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const w = parseInt(document.getElementById('sheetWidth').value);
+        const h = parseInt(document.getElementById('sheetHeight').value);
+        const parts = document.getElementById('parts').value.trim().split('\n');
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = 'black';
+        ctx.strokeRect(0, 0, w, h);
+
+        let x = 0, y = 0, maxH = 0;
+        ctx.fillStyle = 'lightblue';
+
+        for (let line of parts) {
+          const [pw, ph] = line.split('x').map(Number);
+          if (x + pw > w) {
+            x = 0;
+            y += maxH;
+            maxH = 0;
+          }
+          if (y + ph > h) {
+            alert("Не влезает!");
+            break;
+          }
+          ctx.fillRect(x, y, pw, ph);
+          ctx.strokeRect(x, y, pw, ph);
+          x += pw;
+          if (ph > maxH) maxH = ph;
+        }
+      }
+    </script>
+  </body>
+</html>
